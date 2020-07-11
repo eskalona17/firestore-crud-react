@@ -11,22 +11,22 @@ const Links = () => {
     console.log("new task added");
   };
 
-  const onDeleteLink = (id) => {
-    console.log("hola");
+  const onDeleteLink = async (id) => {
+    if(window.confirm('are you sure you want to delete this link?')){
+      await db.collection('links').doc(id).delete();
+      console.log('task deleted')
+    }
   };
 
-  const getLinks = () => {
+  const getLinks = async () => {
     db.collection("links").onSnapshot((querySnapshot) => {
       const docs = [];
       querySnapshot.forEach((doc) => {
-        console.log(doc.data());
-        console.log(doc.id);
-        docs.push({
-          ...doc.data(),
-          id: doc.id,
-        });
-        setLinks(docs);
+        docs.push({ 
+          ...doc.data(), 
+          id: doc.id });
       });
+      setLinks(docs);
     });
   };
 
@@ -45,6 +45,7 @@ const Links = () => {
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <h4>{link.name}</h4>
+                <div>
                 <i
                   className="material-icons text-danger"
                   onClick={() => onDeleteLink(link.id)}
@@ -52,7 +53,7 @@ const Links = () => {
                   close
                 </i>
               </div>
-
+              </div>
               <p>{link.description}</p>
               <a href={link.url} target="_blank" rel="noopener noreferrer">
                 Go to website
